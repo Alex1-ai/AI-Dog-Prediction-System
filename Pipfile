@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+pillow = "==9.4.0"
+python-dotenv = "==0.21.1"
+s3transfer = "==0.8.2"
+gunicorn = "==20.1.0"
+django-storages = "==1.14.2"
+whitenoise = "==6.4.0"
+tensorflow = "==2.14"
+tensorflow-hub = "==0.15"
+numpy = "==1.24.0"
+boto3 = "*"
+
+[dev-packages]
