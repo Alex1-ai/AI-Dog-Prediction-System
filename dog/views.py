@@ -12,6 +12,11 @@ from django.contrib.messages import constants as messages
 
 loaded_full_model = load_model(settings.MODEL_PATH)
 
+
+
+# Disable GPU usage
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+
 def preprocess_image(custom_image_paths):
     custom_data = create_data_batches(custom_image_paths, test_data=True)
     print(custom_data)
