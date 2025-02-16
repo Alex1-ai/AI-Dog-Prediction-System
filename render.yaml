@@ -1,14 +1,14 @@
-services:
-  - type: web
-    name: dog-app-prediction
-    runtime: docker
-    repo: https://github.com/Alex1-ai/AI-Dog-Prediction-System.git # Update with your repo URL
-    branch: main  # Change to the branch you want to deploy from
-    plan: free  # Change to "starter", "standard", etc., if needed
-    envVars:
-      - key: PORT
-        value: 8000
-    dockerContext: .  # The directory where your Dockerfile is located
-    dockerfilePath: Dockerfile  # Path to your Dockerfile
-    startCommand: "sh /app/build.sh"
-    autoDeploy: true
+# services:
+#   - type: web
+#     name: dog-app-prediction
+#     runtime: docker
+#     repo: https://github.com/Alex1-ai/AI-Dog-Prediction-System.git # Update with your repo URL
+#     branch: main  # Change to the branch you want to deploy from
+#     plan: free  # Change to "starter", "standard", etc., if needed
+#     envVars:
+#       - key: PORT
+#         value: 8000
+#     dockerContext: .  # The directory where your Dockerfile is located
+#     dockerfilePath: Dockerfile  # Path to your Dockerfile
+#     startCommand: "sh /app/build.sh"
+#     autoDeploy: true

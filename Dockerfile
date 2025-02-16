@@ -1,44 +1,17 @@
-ARG PYTHON_VERSION=3.10-slim-buster
-
-
-ARG DEBIAN_FRONTEND=noninteractive
-
-
-ARG PORT=8000
-
-
-FROM python:${PYTHON_VERSION}
-
-
-ENV PYTHONDONTWRITEBYTECODE 1
+FROM python:3.11.4-slim-bullseye
+WORKDIR /app
 
 ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
 
-RUN mkdir -p /app
+# install system dependencies
+RUN apt-get update
 
-WORKDIR /app
-#install the linux packages, since these are the dependencies of some python packages
-RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    gcc \
-    cron \
-    wkhtmltopdf \
-    && rm -rf /var/lib/apt/lists/* !
-
-
-COPY requirements.txt /tmp/requirements.txt
-
-
-RUN set -ex && \
-    pip install --upgrade pip && \
-    pip install -r /tmp/requirements.txt && \
-    rm -rf /root/.cache/
-
+# install dependencies
+RUN pip install --upgrade pip
+COPY ./requirements.txt /app/
+RUN pip install -r requirements.txt
 
 COPY . /app
 
-
-EXPOSE 8000
-
-CMD ["gunicorn", "--bind", "0.0.0.0:10000", "app.wsgi:app"]
-# ENTRYPOINT [ "gunicorn", "app.wsgi" ]
+ENTRYPOINT [ "gunicorn", "app.wsgi", "-b", "0.0.0.0:8000"]
