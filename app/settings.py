@@ -30,7 +30,7 @@ SECRET_KEY= os.environ.get('SECRET_KEY', "secret-key-if-not-configured-in-enviro
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG')
 ALLOWED_HOSTS = ["*"]
-
+CSRF_TRUSTED_ORIGINS = ['https://front.bluemix.net/']
 
 # Application definition
 
