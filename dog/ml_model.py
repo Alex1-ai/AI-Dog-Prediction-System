@@ -3,9 +3,14 @@ from django.conf import settings
 import tensorflow as tf
 import tensorflow_hub as hub
 import numpy as np
+import os
 import pandas as pd
 
-tf.config.set_visible_devices([], 'GPU')
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
+
+# tf.config.set_visible_devices([], 'GPU')
 
 labels_csv = pd.read_csv(settings.LABEL_PATH)
 
