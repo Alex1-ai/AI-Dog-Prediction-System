@@ -40,5 +40,5 @@ COPY . /app
 
 EXPOSE 8000
 
-# CMD ["gunicorn", "app.wsgi"]
-ENTRYPOINT [ "gunicorn", "app.wsgi" ]
+CMD ["gunicorn", "--bind", "0.0.0.0:10000", "app.wsgi:app"]
+# ENTRYPOINT [ "gunicorn", "app.wsgi" ]
