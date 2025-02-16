@@ -1,8 +1,8 @@
 services:
   - type: web
-    name: django-app
+    name: dog-app-prediction
     runtime: docker
-    repo: https://github.com/yourusername/yourrepo  # Update with your repo URL
+    repo: https://github.com/Alex1-ai/AI-Dog-Prediction-System.git # Update with your repo URL
     branch: main  # Change to the branch you want to deploy from
     plan: free  # Change to "starter", "standard", etc., if needed
     envVars:
