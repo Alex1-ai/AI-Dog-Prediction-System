@@ -9,7 +9,7 @@ import numpy as np
 import os
 from .models import Contact, Dog
 from django.contrib.messages import constants as messages
-
+# print(settings.MODEL_PATH)
 loaded_full_model = load_model(settings.MODEL_PATH)
 
 

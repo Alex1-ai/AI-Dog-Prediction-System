@@ -5,7 +5,7 @@ import tensorflow_hub as hub
 import numpy as np
 import pandas as pd
 
-
+tf.config.set_visible_devices([], 'GPU')
 
 labels_csv = pd.read_csv(settings.LABEL_PATH)
 
