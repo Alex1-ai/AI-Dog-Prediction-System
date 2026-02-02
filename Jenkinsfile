@@ -31,14 +31,15 @@ pipeline {
        stage('Deploy') {
             steps {
                 // Deploy the application (this is a placeholder, replace with actual deployment steps)
+                script {
+                    def dockerCmd = "docker run -d -p 8000:8000 ${DOCKER_IMAGE}"
+                    echo 'Deploying the AI Dog Prediction System...'
+                    sshagent(['ec2-server-key']) {
 
-                def dockerCmd = "docker run -d -p 8000:8000 ${DOCKER_IMAGE}"
-                echo 'Deploying the AI Dog Prediction System...'
-                sshagent(['ec2-server-key']) {
+                        // some block
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@18.205.238.229 ${dockerCmd}"
 
-                       // some block
-                    sh "ssh -o StrictHostKeyChecking=no ec2-user@18.205.238.229 ${dockerCmd}"
-
+                    }
                 }
             }
         }
