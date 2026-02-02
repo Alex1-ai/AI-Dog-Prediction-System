@@ -1,11 +1,19 @@
 #!/usr/bin/env groovy
 
+library identifier: 'jenkins-shared-library@main', retriever: modernSCM(
+   [$class: 'GitSCMSource',
+    remote: 'https://github.com/Alex1-ai/jenkins-shared-library',
+    credentialsId: 'github-credentials'
+   ]
+)
+
+
 pipeline {
     agent any
 
     environment {
         // Define any environment variables here
-        DOCKER_IMAGE = 'chidi123/dog_prediction:1.3'
+        DOCKER_IMAGE = 'chidi123/dog_prediction:1.4'
     }
 
     stages {
@@ -17,13 +25,17 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
                 // Build the Docker image
                 script {
                     // docker.build(DOCKER_IMAGE)
 
                         echo "Building a docker application"
+                        buildImage(env.DOCKER_IMAGE)
+                        dockerLogin()
+                        dockerPush(env.DOCKER_IMAGE)
+
 
                 }
             }
