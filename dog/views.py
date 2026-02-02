@@ -1,122 +1,55 @@
-from django.shortcuts import render, redirect
+# views.py
+from django.shortcuts import render
 from django.conf import settings
-from django.contrib.sites.shortcuts import get_current_site
-from .models import Dog
-from .ml_model import  load_model,create_data_batches,get_pred_label
-import tensorflow as tf
-from PIL import Image
-import numpy as np
-import os
-from .models import Contact, Dog
 from django.contrib.messages import constants as messages
-# print(settings.MODEL_PATH)
-loaded_full_model = load_model(settings.MODEL_PATH)
 
+from .models import Dog, Contact
+from .ml_model import MODEL, create_data_batches, get_pred_label
 
+# -----------------------------
+# ML prediction helper
+# -----------------------------
+def preprocess_image(image_paths):
+    data = create_data_batches(image_paths, test_data=True)
+    preds = MODEL.predict(data)
+    return [get_pred_label(preds[i]) for i in range(len(preds))]
 
-# Disable GPU usage
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
-
-def preprocess_image(custom_image_paths):
-    custom_data = create_data_batches(custom_image_paths, test_data=True)
-    print(custom_data)
-    # Make predictions on the custom data
-    custom_preds = loaded_full_model.predict(custom_data)
-    # Get custom image prediction lbels
-    custom_preds_labels = [get_pred_label(custom_preds[i]) for i in range(len(custom_preds))]
-    print(custom_preds_labels)
-
-    return custom_preds_labels
-
-
+# -----------------------------
+# Views
+# -----------------------------
 def home(request):
-    print(settings.MODEL_PATH)
-
-    # print(DEBUG)
-
-    return render(request, 'index.html')
-
-
-
+    return render(request, "index.html")
 
 def contact(request):
     if request.method == "POST":
-        name = request.POST['name']
-        email = request.POST['email']
-        subject = request.POST['subject']
-        message = request.POST["message"]
-        print("post", name, email, subject, message)
-        # print(contactName, contactEmail, contactSubject, contactMessage)
-        contactFeedback = Contact.objects.create(
-            name=name, email=email, subject=subject, message=message)
-
-
-        try:
-            contactSaved = contactFeedback.save()
-            print(contactSaved)
-
-            messages.info(
-                request, 'Thanks, We get back to you as soon as possible')
-            return render(request, "contact.html")
-        except:
-            messages.warning(request, "Please Try Again, Something Went Wrong")
-            return render(request, "contact.html")
-
-
-    else:
-        return render(request, "contact.html")
+        Contact.objects.create(
+            name=request.POST["name"],
+            email=request.POST["email"],
+            subject=request.POST["subject"],
+            message=request.POST["message"],
+        )
+        messages.info(request, "Thanks, we’ll get back to you soon.")
+    return render(request, "contact.html")
 
 def uploadDog(request):
-    if request.method == 'POST' :
-        name = request.POST['name']
-        image = request.FILES['image']
-        print(name, image)
-        print("Entered here")
+    if request.method == "POST":
+        dog = Dog.objects.create(
+            name=request.POST["name"],
+            image=request.FILES["image"]
+        )
 
-        # Preprocess the image
-        # processed_image = preprocess_image(image)
-        # print(f"Processed image shape: {processed_image.shape}")
+        image_path = f"{settings.BASE_DIR}{dog.image.url}"
+        print("Image path:", image_path)
+        predicted_label = preprocess_image([image_path])[0]
 
-        # Save the dog entry in the database
-        dog_list = []
-        dogModel = Dog(name=name, image=image)
-        dogModel.save()
+        return render(
+            request,
+            "dog-upload.html",
+            {
+                "name": dog.name,
+                "pics": dog.image.url,
+                "predicted_label": predicted_label,
+            }
+        )
 
-         # Get the site domain
-        # current_site = get_current_site(request)
-        # domain = current_site.domain
-        # print("Current site domain: ", domain)
-
-        image_url = dogModel.image.url
-        full_image_url = f"{settings.BASE_DIR}{image_url}"
-
-
-        # print("this is saved here ",dogModel.image.url)
-        dog_list.append(full_image_url)
-        print(dog_list)
-        predicted_label = preprocess_image(dog_list)
-
-        # Make predictions on the peadable label
-        # class_names = ['breed1', 'breed2', 'breed3', ...]  # Add your class names here
-        # predicted_label = class_names[predicted_class]
-        # print(f"Predicted Label: {predicted_label}")rocessed image
-        # prediction = loaded_full_model.predict(processed_image)
-        # # Get custom image prediction lbels
-        # custom_preds_labels = [get_pred_label(custom_preds[i]) for i in range(len(custom_preds))]
-        # custom_preds_labels
-        # predicted_class = np.argmax(prediction, axis=1)[0]
-
-        # Map predicted_class to a human-r
-
-
-
-        context = {
-            'name': dogModel.name,
-            'pics': dogModel.image,
-            'predicted_label': predicted_label[0],
-        }
-        return render(request, "dog-upload.html", context)
-    else:
-        return render(request, "dog-upload.html")
-
-
+    return render(request, "dog-upload.html")

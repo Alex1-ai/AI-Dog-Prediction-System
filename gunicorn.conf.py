@@ -1,5 +1,7 @@
-import multiprocessing
-
-workers = multiprocessing.cpu_count() * 2 + 1
-threads = 2
-timeout = 120
+# gunicorn.conf.py
+bind = "0.0.0.0:8000"
+workers = 1
+worker_class = "sync"
+threads = 1
+timeout = 300
+preload_app = True
